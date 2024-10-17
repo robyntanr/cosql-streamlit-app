@@ -6,7 +6,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 def load_model():
     try:
         model_name = "mrm8488/t5-small-finetuned-wikiSQL"
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
         model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
         return tokenizer, model
     except Exception as e:
