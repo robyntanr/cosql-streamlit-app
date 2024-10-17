@@ -1,3 +1,1 @@
-streamlit
-transformers
-torch
+streamlit==1.39.0\ntransformers==4.45.2\ntorch @ https://download.pytorch.org/whl/cu121_full/torch-2.4.1%2Bcu121-cp310-cp310-linux_x86_64.whl\naltair==4.2.2\ntokenizers==0.20.1\npandas==2.2.2
