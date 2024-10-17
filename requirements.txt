@@ -2,3 +2,4 @@ transformers==4.33.0
 torch
 streamlit
 pip>=24.2
+python-3.10
