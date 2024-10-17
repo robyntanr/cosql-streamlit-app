@@ -1,6 +1,6 @@
 streamlit==1.39.0
 transformers==4.45.2
-torch @ https://download.pytorch.org/whl/cu121_full/torch-2.4.1%2Bcu121-cp310-cp310-linux_x86_64.whl
+torch==2.0.1 
 altair==4.2.2
 tokenizers==0.20.1
 pandas==2.2.2
