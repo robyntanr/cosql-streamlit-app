@@ -1,6 +1,7 @@
 streamlit==1.39.0
 transformers==4.45.2
-torch==2.0.1 
+torch==2.4.0  
 altair==4.2.2
 tokenizers==0.20.1
 pandas==2.2.2
+
