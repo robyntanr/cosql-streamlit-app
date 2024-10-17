@@ -9,16 +9,16 @@ try:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
-    # Enable gradient checkpointing (use only if supported)
-    if hasattr(model, "gradient_checkpointing_enable"):
+    # Safely enable gradient checkpointing if supported
+    try:
         model.gradient_checkpointing_enable()
-    else:
-        st.warning("Gradient checkpointing is not supported for this model version.")
+    except AttributeError:
+        st.warning("This model does not support gradient checkpointing.")
 
 except ImportError as e:
     st.error(f"Import Error: {e}. Please ensure all dependencies are installed.")
 except OSError as e:
-    st.error(f"Model loading error: {e}. The model may not exist or your internet connection may have issues.")
+    st.error(f"Model loading error: {e}. Check your internet connection or model availability.")
 except Exception as e:
     st.error(f"Unexpected error: {e}")
 
