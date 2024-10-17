@@ -1,11 +1,15 @@
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Load the alpineai/cosql model and tokenizer
-model_name = "alpineai/cosql"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+# Load the model and tokenizer with error handling
+try:
+    model_name = "alpineai/cosql"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+except ImportError as e:
+    st.error(f"An error occurred while loading the model: {e}. Please check your dependencies.")
 
+# Function to generate SQL query
 def generate_sql_query(user_input):
     inputs = tokenizer(user_input, return_tensors="pt")
     outputs = model.generate(**inputs)
