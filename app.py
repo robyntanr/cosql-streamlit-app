@@ -1,13 +1,13 @@
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 # Function to load the model and tokenizer
 @st.cache_resource  # Cache to prevent reloading on every run
 def load_model():
     try:
         model_name = "mrm8488/t5-small-finetuned-wikiSQL"
-        tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+        tokenizer = T5Tokenizer.from_pretrained(model_name)
+        model = T5ForConditionalGeneration.from_pretrained(model_name)
         return tokenizer, model
     except Exception as e:
         st.error(f"Error loading the model: {e}")
@@ -20,8 +20,10 @@ def generate_sql_query(user_input):
         tokenizer, model = load_model()
     if tokenizer and model:
         try:
-            inputs = tokenizer.encode(user_input, return_tensors="pt", max_length=512, truncation=True)
-            outputs = model.generate(inputs, max_length=150)
+            # Add the necessary prefix
+            input_text = "translate English to SQL: " + user_input
+            input_ids = tokenizer.encode(input_text, return_tensors="pt")
+            outputs = model.generate(input_ids)
             query = tokenizer.decode(outputs[0], skip_special_tokens=True)
             return query
         except Exception as e:
