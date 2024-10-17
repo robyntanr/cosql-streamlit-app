@@ -1,26 +1,27 @@
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Load the model and tokenizer with error handling
-try:
-    model_name = "alpineai/cosql"
-    
-    # Initialize tokenizer and model
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
-    # Safely enable gradient checkpointing if supported
+# Helper function to initialize the model and tokenizer
+@st.cache_resource  # Cache to prevent reloading on every run
+def load_model():
     try:
-        model.gradient_checkpointing_enable()
-    except AttributeError:
-        st.warning("This model does not support gradient checkpointing.")
+        model_name = "alpineai/cosql"
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
-except ImportError as e:
-    st.error(f"Import Error: {e}. Please ensure all dependencies are installed.")
-except OSError as e:
-    st.error(f"Model loading error: {e}. Check your internet connection or model availability.")
-except Exception as e:
-    st.error(f"Unexpected error: {e}")
+        # Enable gradient checkpointing if supported
+        try:
+            model.gradient_checkpointing_enable()
+        except AttributeError:
+            st.warning("This model does not support gradient checkpointing.")
+        
+        return tokenizer, model
+    except Exception as e:
+        st.error(f"Error loading the model: {e}")
+        return None, None
+
+# Initialize the tokenizer and model
+tokenizer, model = load_model()
 
 # Function to generate SQL query from user input
 def generate_sql_query(user_input):
@@ -36,9 +37,12 @@ def generate_sql_query(user_input):
 # Streamlit app interface
 st.title("Chat-to-SQL Generator")
 
-user_input = st.text_input("Ask your query:")
-if user_input:
-    sql_query = generate_sql_query(user_input)
-    if sql_query:
-        st.subheader("Generated SQL Query")
-        st.code(sql_query)
+if tokenizer and model:  # Ensure the model loaded successfully
+    user_input = st.text_input("Ask your query:")
+    if user_input:
+        sql_query = generate_sql_query(user_input)
+        if sql_query:
+            st.subheader("Generated SQL Query")
+            st.code(sql_query)
+else:
+    st.error("The model failed to load. Please check the logs for more details.")
